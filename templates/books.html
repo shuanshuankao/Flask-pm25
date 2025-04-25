@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=h1, initial-scale=1.0">
+    <title>首頁</title>
+    <style>
+        body{
+            text-align: center;
+            background-color: rgb(167, 238, 238);
+        }
+
+        .price{
+            color: rgb(47, 0, 255);
+        }
+        .title{
+            background-color: coral;
+            color: azure;
+            padding: 6px;
+        }
+
+        img{
+            border: 1px solid black;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{name}}歡迎登入</h1>
+    <p>目前時間:{{now}}</p>
+    
+    <form action="/bmi">
+        <label for="">身高</label>
+        <input type="number" name="height">
+        <label for="">體重<label>
+        <input type="number" name="weight">
+        <button type="submit">計算</button>
+    </form>
+
+    {% if books %}
+    {% for book in books %}
+    <h1 class="title">{{book.name}}</h1>
+    <h3 class="price">${{book.price}}</h3>
+    <img src="{{book.image_url}}" alt="">
+    {% endfor %} 
+    {% else %}
+    <h3>is no any books</h3>
+    {% endif %}
+
+    
+    
+
+    <br>
+    <a href="/pm25-data">pm25-data</a>
+</body>
+</html>
