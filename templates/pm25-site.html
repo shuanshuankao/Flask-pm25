@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首頁</title>
+    <title>首頁</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+
+    <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+    <style>
+    ＃main{
+        text-align: center;
+        margin: 0 auto;
+    }
+    </style>
+</head>
+<body>
+    <h1>站點細懸浮微粒資料 (PM2.5)</h1>
+    <h3>選擇縣市</h3>
+    <select name="county" id="county">
+        {% for county in counties %}
+        <option value="{{county}}" {% if selected_county==county %}  selected   {% endif %}>{{county}}</option>
+        {% endfor %}
+    </select>
+
+    <h3>選擇站點</h3>
+    <select name="site" id="site">
+        <option value="林口">林口</option>
+        <option value="富貴角">富貴角</option>
+    </select>
+
+    <p><button type="button" onclick="query()">查詢</button></p>
+
+    <div id="main" style="width: 800px;height:400px;"></div>
+    {{counties}}
+<script>
+    // 取得county 跟 site element
+    const countyE1=document.querySelector("#county");
+    const siteE1=document.querySelector("#site");
+    const chart1 = echarts.init(document.getElementById('main'));
+    
+    countyE1.addEventListener("change",()=>{
+        console.log("change");
+        let county=countyE1.value;
+        const url=`/pm25-county-site?county=${county}`
+        // 重後端要求資料
+        fetch(url)
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data);
+            siteE1.innerHTML="";
+            // 動態產生 option
+            for(let i=0;i<data.length;i++){
+                const opt=document.createElement("option");
+                opt.value=data[i];
+                opt.textContent=data[i];
+                siteE1.appendChild(opt);
+            }
+        });
+    });
+
+    function drawChart(chart,site,labels,values){
+        var option = {
+          title: {
+            text: `${site} PM2.5 數據柱狀圖`
+          },
+          tooltip: {},
+          legend: {
+            data: ['PM25']
+          },
+          xAxis: {
+            data: labels
+          },
+          dataZoom:[{
+            type:'slider',
+            start:0,
+            end:100
+          }],
+          yAxis: {},
+          series: [
+            {
+              name: 'PM25',
+              type: 'line',
+              smooth:true,
+              data: values
+            }
+          ]
+        };
+    
+        // 使用刚指定的配置项和数据显示图表。
+        chart.setOption(option);
+    }
+
+
+    function query(){
+        let county=countyE1.value;
+        let site=siteE1.value;
+        const url=`/pm25-data-site?county=${county}&site=${site}`
+        // 從後端要求資料
+        fetch(url)
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data);
+
+            drawChart(chart1,data.site,data.x_data,data.y_data);
+        });
+
+        console.log(countyE1.value,siteE1.value,url);
+    }
+</script>
+
+</body>
+</html>

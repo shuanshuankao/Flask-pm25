@@ -49,6 +49,8 @@
         </select>
         <button type="submit">查詢</button>
     </form>
+
+    <a href="/pm25-site">詳細站點資訊</a>
     
     <div id="chart_data"
         data-labels='{{x_data | tojson | safe }}' data-values='{{y_data | tojson | safe }}'>
@@ -82,7 +84,7 @@ const chartdata= document.querySelector("#chart_data");
         const labels=JSON.parse(chartdata.dataset.labels);
         const values=JSON.parse(chartdata.dataset.values);
         
-        // console.log(chartdata,labels,values);
+        console.log(chartdata,labels,values);
         
 
 
@@ -91,7 +93,7 @@ const chartdata= document.querySelector("#chart_data");
         var myChart = echarts.init(document.getElementById('main'));
         var option = {
           title: {
-            text: 'PM2.5 matplot'
+            text: 'PM2.5 數據柱狀圖'
           },
           tooltip: {},
           legend: {

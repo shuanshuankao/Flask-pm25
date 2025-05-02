@@ -3,10 +3,30 @@ from datetime import datetime
 import pandas as pd
 
 # import pymysql
-from pm25 import get_pm25_data_from_mysql, update_db, get_pm25_data_by_site
+from pm25 import (
+    get_pm25_data_from_mysql,
+    update_db,
+    get_pm25_data_by_site,
+    get_all_counties,
+    get_site_by_county,
+)
 import json
 
 app = Flask(__name__)
+
+
+@app.route("/pm25-county-site")
+def pm25_county_site():
+    county = request.args.get("county")
+    sites = get_site_by_county(county)
+    result = json.dumps(sites, ensure_ascii=False)
+    return result
+
+
+@app.route("/pm25-site")
+def pm25_site():
+    counties = get_all_counties()
+    return render_template("pm25-site.html", counties=counties)
 
 
 @app.route("/pm25-data-site")
