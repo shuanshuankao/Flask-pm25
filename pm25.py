@@ -47,14 +47,36 @@ def open_db():
     return conn
 
 
+# 取得縣市對應的site資料
+def get_pm25_data_by_site(county, site):
+    conn = None
+    columns, datas = None, None
+    try:
+        conn = open_db()
+        cur = conn.cursor()
+        sqlstr = "select * from pm25 where county=%s and site=%s;"
+        cur.execute(sqlstr, (county, site))
+        # 輸出資料表欄位
+        print(cur.description)
+        columns = [col[0] for col in cur.description]
+        # 實際的資料
+        datas = cur.fetchall()
+    except Exception as e:
+        print(e)
+    finally:
+        if conn is not None:
+            conn.close()
+    return columns, datas
+
+
 def get_pm25_data_from_mysql():
     conn = None
     columns, datas = None, None
     try:
         conn = open_db()
         cur = conn.cursor()
-        # sqlstr = "select MAX(datacreationdate) from pm25;"
         sqlstr = "select * from pm25 where datacreationdate=(select MAX(datacreationdate) from pm25);"
+
         cur.execute(sqlstr)
         # 輸出資料表欄位
         print(cur.description)
@@ -71,7 +93,8 @@ def get_pm25_data_from_mysql():
 
 # 本地運行
 if __name__ == "__main__":
-    update_db()
+    # update_db()
+    print(get_pm25_data_by_site("新北市", "林口"))
     # conn = open_db()
     # print(conn)
     # columns, datas = get_pm25_data_from_mysql()
