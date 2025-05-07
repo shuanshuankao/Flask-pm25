@@ -8,7 +8,7 @@ def get_site_by_county(county):
     try:
         conn = open_db()
         cur = conn.cursor()
-        sqlstr = "select distinct site from pm25 where county-%s;"
+        sqlstr = "select distinct site from pm25 where county=%s;"
         cur.execute(sqlstr, (county,))
         # 輸出資料表欄位
         # print(cur.description)
@@ -97,7 +97,7 @@ def get_pm25_data_by_site(county, site):
     try:
         conn = open_db()
         cur = conn.cursor()
-        sqlstr = "select * from pm25 where county=%s and site=%s;"
+        sqlstr = "select * from pm25 where county=%s&site=%s;"
         cur.execute(sqlstr, (county, site))
         # 輸出資料表欄位
         print(cur.description)

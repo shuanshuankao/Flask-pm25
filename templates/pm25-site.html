@@ -27,25 +27,35 @@
 
     <h3>選擇站點</h3>
     <select name="site" id="site">
-        <option value="林口">林口</option>
-        <option value="富貴角">富貴角</option>
+        <!-- <option value="林口">林口</option>
+        <option value="富貴角">富貴角</option> -->
     </select>
 
     <p><button type="button" onclick="query()">查詢</button></p>
+    
+    
 
+    <!-- 顯示站點名稱  查詢後更改對應的站點名稱-->
+    
     <div id="main" style="width: 800px;height:400px;"></div>
-    {{counties}}
+    
+    <div id="panel">
+      <h3 style="color: black;">Higher:<span class="higher" style="color: brown;">99</span> 
+        <br>lower:<span class="lower" style="color: blue;">0</span> </h3>
+    </div>
+
 <script>
     // 取得county 跟 site element
     const countyE1=document.querySelector("#county");
     const siteE1=document.querySelector("#site");
     const chart1 = echarts.init(document.getElementById('main'));
     
-    countyE1.addEventListener("change",()=>{
-        console.log("change");
-        let county=countyE1.value;
+    updateSite();
+
+    function updateSite(){
+      let county=countyE1.value;
         const url=`/pm25-county-site?county=${county}`
-        // 重後端要求資料
+        // 從後端要求資料
         fetch(url)
         .then(res=>res.json())
         .then(data=>{
@@ -59,9 +69,32 @@
                 siteE1.appendChild(opt);
             }
         });
+    }
+    
+    
+    countyEl.addEventListener("change",()=>{
+        let county=countyEl.value;
+        console.log(county);
+        
+        const url=`/pm25-county-site?county=${county}`
+        fetch(url)
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data);
+            siteEl.innerHTML="";
+            for(let i=0;i<data.length;i++){
+                const opt=document.createElement("option");
+                opt.value=data[i];
+                opt.textContent=data[i];
+                siteEl.appendChild(opt);
+            }
+
+            //drawChart(chart1,data.site,data.x_data,data.y_data);
+            
+        });
     });
 
-    function drawChart(chart,site,labels,values){
+    function drawChart(chart1,site,labels,values){
         var option = {
           title: {
             text: `${site} PM2.5 數據柱狀圖`
@@ -90,20 +123,23 @@
         };
     
         // 使用刚指定的配置项和数据显示图表。
-        chart.setOption(option);
+        chart1.setOption(option);
     }
 
 
     function query(){
         let county=countyE1.value;
         let site=siteE1.value;
-        const url=`/pm25-data-site?county=${county}&site=${site}`
+        const url=`/pm25-data-site?county=${county}&site=${site}`;
         // 從後端要求資料
         fetch(url)
         .then(res=>res.json())
         .then(data=>{
             console.log(data);
-
+            document.querySelector("#SiteName").innerHTML=`＄{county} - ${site}`;
+            //取得最高/最低pm25
+            document.querySelector(".higher").innerHTML=data.higher;
+            document.querySelector(".lower").innerHTML=data.lower;
             drawChart(chart1,data.site,data.x_data,data.y_data);
         });
 
