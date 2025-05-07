@@ -32,6 +32,8 @@
     </select>
 
     <p><button type="button" onclick="query()">查詢</button></p>
+
+    <h2 id="SiteName"></h2>
     
     
 
@@ -46,6 +48,7 @@
 
 <script>
     // 取得county 跟 site element
+    
     const countyE1=document.querySelector("#county");
     const siteE1=document.querySelector("#site");
     const chart1 = echarts.init(document.getElementById('main'));
@@ -72,8 +75,8 @@
     }
     
     
-    countyEl.addEventListener("change",()=>{
-        let county=countyEl.value;
+    countyE1.addEventListener("change",()=>{
+        let county=countyE1.value;
         console.log(county);
         
         const url=`/pm25-county-site?county=${county}`
@@ -130,13 +133,15 @@
     function query(){
         let county=countyE1.value;
         let site=siteE1.value;
+        console.log( county,site);
+        
         const url=`/pm25-data-site?county=${county}&site=${site}`;
         // 從後端要求資料
         fetch(url)
         .then(res=>res.json())
         .then(data=>{
             console.log(data);
-            document.querySelector("#SiteName").innerHTML=`＄{county} - ${site}`;
+            document.querySelector("#SiteName").innerHTML=`${county} - ${site}`;
             //取得最高/最低pm25
             document.querySelector(".higher").innerHTML=data.higher;
             document.querySelector(".lower").innerHTML=data.lower;
@@ -144,6 +149,8 @@
         });
 
         console.log(countyE1.value,siteE1.value,url);
+
+
     }
 </script>
 
